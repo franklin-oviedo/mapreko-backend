@@ -15,6 +15,12 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "oxlint --type-aware src/ test/",
+    "db:up": "docker compose up -d --wait database",
+    "db:stop": "docker compose stop database",
+    "db:migrate": "npm run build && node --env-file-if-exists=.env node_modules/typeorm/cli.js migration:run -d dist/database/data-source.js",
+    "db:revert": "npm run build && node --env-file-if-exists=.env node_modules/typeorm/cli.js migration:revert -d dist/database/data-source.js",
+    "db:status": "npm run build && node --env-file-if-exists=.env node_modules/typeorm/cli.js migration:show -d dist/database/data-source.js",
+    "test:database": "vitest run --config vitest.config.database.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
@@ -24,9 +30,19 @@
   "dependencies": {
     "@nestjs/common": "^12.0.1",
     "@nestjs/core": "^12.0.1",
+    "@nestjs/config": "^12.1.1",
+    "@nestjs/jwt": "^12.0.4",
+    "@nestjs/swagger": "^12.1.1",
+    "@nestjs/throttler": "^6.7.1",
+    "@nestjs/typeorm": "^12.0.3",
     "@nestjs/platform-express": "^12.0.1",
+    "pg": "^8.23.1",
+    "cookie": "^2.0.2",
+    "google-auth-library": "^11.3.4",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "typeorm": "^0.3.28",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@nestjs/cli": "^12.0.0",
