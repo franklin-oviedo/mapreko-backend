@@ -14,6 +14,7 @@ Al crear el servicio, Render solicitara las variables marcadas `sync: false`. Co
 | --- | --- |
 | `DATABASE_URL` | URI PostgreSQL de Supabase; para Render usa la cadena de conexion del **Session pooler** si el host de conexion directa no admite IPv4. |
 | `DATABASE_SSL` | `true` |
+| `NODE_EXTRA_CA_CERTS` | `./certs/prod-ca-2021.crt` |
 | `FRONTEND_ORIGIN` | Origen publico del frontend en Cloudflare, por ejemplo `https://mapreko-frontend.<subdominio-cuenta>.workers.dev`, sin barra final. |
 | `GOOGLE_REDIRECT_URI` | `${FRONTEND_ORIGIN}/api/auth/google/callback`, reemplazando el marcador por el origen real del frontend. |
 | `GOOGLE_CLIENT_ID` | ID de cliente OAuth de Google. |
@@ -29,6 +30,10 @@ Genera `AUTH_SECRET` localmente, por ejemplo con `openssl rand -base64 48`, y pe
 Este backend usa TypeORM y PostgreSQL. `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` y `SUPABASE_JWKS_URL` no son variables consumidas por la aplicacion y no sustituyen `DATABASE_URL`. El inicio de sesion actual usa Google directamente, no Supabase Auth.
 
 Guarda en **Render > Environment** la URI PostgreSQL del **Session pooler** de Supabase y `DATABASE_SSL=true`. Si la URI incluye parametros `sslmode` u otros parametros `ssl*`, quitalos: la politica TLS se configura mediante `DATABASE_SSL` y la aplicacion rechaza configuraciones duplicadas. Codifica los caracteres especiales de la contrasena para una URI.
+
+El certificado publico de Supabase Root 2021 CA esta incluido en `certs/prod-ca-2021.crt` y vence el 26 de abril de 2031. El Blueprint configura `NODE_EXTRA_CA_CERTS=./certs/prod-ca-2021.crt` para agregarlo a las autoridades de confianza de Node, sin reemplazar las autoridades del sistema ni desactivar la validacion TLS (`rejectUnauthorized: true`). Esto cubre tanto las migraciones como el servidor, porque ambos heredan la variable al arrancar.
+
+Para un servicio Render existente, sincroniza el Blueprint o agrega esa variable en **Environment**, guarda los cambios y vuelve a desplegar. Node solo carga `NODE_EXTRA_CA_CERTS` al iniciar; no basta con asignarla dentro de un archivo `.env` leido despues del arranque. Para usarla localmente, exportala en el entorno de la terminal antes de ejecutar las migraciones o iniciar el backend.
 
 Si una clave secreta se comparte en un chat o un registro, revocala y genera una nueva desde el panel de Supabase. Nunca la guardes en el repositorio ni en el frontend; no hace falta anadirla al backend actual.
 
