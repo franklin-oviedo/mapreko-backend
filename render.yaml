@@ -3,7 +3,7 @@ services:
     name: mapreko-backend
     runtime: node
     plan: free
-    buildCommand: npm ci && npm run build
+    buildCommand: npm ci --include=dev && npm run build
     startCommand: node --env-file-if-exists=.env node_modules/typeorm/cli.js migration:run -d dist/database/data-source.js && npm run start:prod
     healthCheckPath: /api/auth/config
     envVars:

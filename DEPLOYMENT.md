@@ -4,6 +4,10 @@
 
 En Render, crea un **Blueprint** desde este repositorio y la rama `main`. Render detectara `render.yaml`, compilara la API NestJS y ejecutara las migraciones al iniciar el servicio. El blueprint usa el plan gratuito; Render puede suspender servicios gratuitos inactivos, por lo que la primera solicitud tras una pausa puede tardar.
 
+El comando de compilacion es `npm ci --include=dev && npm run build`. Se incluyen las dependencias de desarrollo porque contienen el compilador NestJS, incluso cuando `NODE_ENV=production`.
+
+Si el servicio ya existe y conserva una configuracion anterior, sincroniza el Blueprint o actualiza **Settings > Build & Deploy > Build Command** con ese comando. Despues ejecuta **Manual Deploy > Clear build cache & deploy**. El `package-lock.json` del repositorio debe mantenerse sincronizado con `package.json`; para actualizarlo localmente usa `npm install --package-lock-only` y confirma que `npm ci --include=dev` funciona antes de publicarlo.
+
 Al crear el servicio, Render solicitara las variables marcadas `sync: false`. Configura estos valores en el servicio, en **Environment**:
 
 | Variable | Valor |
